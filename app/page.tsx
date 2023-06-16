@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 import { CustomFilter, Hero, SearchBar } from '@/components';
-52:11
+
 
 export default function Home() {
   return (
