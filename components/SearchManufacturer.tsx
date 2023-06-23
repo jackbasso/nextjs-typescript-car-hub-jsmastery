@@ -4,7 +4,7 @@ import { Combobox, Transition } from '@headlessui/react';
 import { SearchManufacturerProps } from '@/types';
 import Image from 'next/image';
 import { useState, Fragment } from 'react';
-1:16
+
 import { manufacturers } from '@/constants';
 
 const SearchManufacturer = ({manufacturer, setManufacturer}: SearchManufacturerProps) => {
