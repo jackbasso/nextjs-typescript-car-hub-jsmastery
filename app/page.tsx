@@ -1,17 +1,27 @@
+'use client';
+
+import { useState } from 'react';
 import { HomeProps } from '@/types';
-import { CustomFilter, Hero, SearchBar, CarCard } from '@/components';
+import { CustomFilter, Hero, SearchBar, CarCard, ShowMore } from '@/components';
 import { fetchCars } from '@/utils';
 import { fuels, yearsOfProduction } from '@/constants';
+import Image from 'next/image';
 
 
-export default async function Home({ searchParams }: HomeProps) {
-  const allCars = await fetchCars({
-    manufacturer: searchParams.manufacturer || "",
-    year: searchParams.year || 2022,
-    fuel: searchParams.fuel || "",
-    limit: searchParams.limit || 10,
-    model: searchParams.model || "",
-  });
+export default function Home() {
+  const [allCars, setAllCars] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  //search state
+  const [manufacturer, setManufacturer] = useState("");
+  const [model, setModel] = useState("");
+
+  //filter states
+  const [fuel, setFuel] = useState("");
+  const [year, setYear] = useState(2022);
+
+  //pagination states
+  const [limit, setLimit] = useState(10)
 
   const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1 || !allCars;
 
@@ -25,20 +35,38 @@ export default async function Home({ searchParams }: HomeProps) {
           <p>Explore the cars you might like</p>
         </div>
         <div className="home__filters">
-          <SearchBar />
+          <SearchBar setManufacturer={setManufacturer}
+          setModel={setModel} 
+          />
           <div className="home__filter-container">
-            <CustomFilter title="fuel" options={fuels}/>
-            <CustomFilter title="year" options={yearsOfProduction} />
+            <CustomFilter title="fuel" options={fuels} setFilter={setFuel} />
+            <CustomFilter title="year" options={yearsOfProduction} setFilter={setYear} />
           </div>
         </div>
         
-        { !isDataEmpty ? (
+        { allCars.length > 0 ? (
           <section>
             <div className="home__cars-wrapper">
               {allCars?.map((car) => (
               <CarCard car= {car} />
               ))}
             </div>
+            
+            {loading && (
+              <Image 
+                src="/loader.svg"
+                alt="loader"
+                width={50}
+                height={50}
+                className="object-contain"  
+              />
+            )}
+
+            <ShowMore 
+              pageNumber={(limit / 10}
+              isNext={(limit > allCars.length}
+              setLimit = {setLimit}
+            />
           </section>
         ) : (
           <div className='home__error-container'>

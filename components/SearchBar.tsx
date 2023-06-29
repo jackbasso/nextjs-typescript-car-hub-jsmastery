@@ -17,8 +17,8 @@ const SearchButton = ( {otherClasses}: { otherClasses: string } ) => (
     />
   </button>
 );
-
-const SearchBar = () => {
+3:12
+const SearchBar = ( setManufacturer) => {
   const [manufacturer, setManufacturer] = useState('');
   const [model, setModel] = useState('');
   const router = useRouter();
