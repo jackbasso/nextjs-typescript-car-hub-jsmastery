@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HomeProps } from '@/types';
 import { CustomFilter, Hero, SearchBar, CarCard, ShowMore } from '@/components';
 import { fetchCars } from '@/utils';
@@ -22,6 +22,30 @@ export default function Home() {
 
   //pagination states
   const [limit, setLimit] = useState(10)
+
+  const getCars = async () => {
+    setLoading(true);
+    try {
+      const result = await fetchCars({
+        manufacturer: manufacturer || '',
+        year: year || 2022,
+        fuel: fuel || '',
+        limit: limit || 10,
+        model: model || '',
+      });
+      
+      setAllCars(result)
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }  
+  }
+
+  useEffect(() => {
+    getCars();
+  }, [fuel, year, limit, manufacturer, model])
+  
 
   const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1 || !allCars;
 
@@ -53,6 +77,7 @@ export default function Home() {
             </div>
             
             {loading && (
+              <div className="mt-16 w-full flex-center">
               <Image 
                 src="/loader.svg"
                 alt="loader"
@@ -60,11 +85,12 @@ export default function Home() {
                 height={50}
                 className="object-contain"  
               />
+              </div>
             )}
 
             <ShowMore 
-              pageNumber={(limit / 10}
-              isNext={(limit > allCars.length}
+              pageNumber={limit / 10}
+              isNext={limit > allCars.length}
               setLimit = {setLimit}
             />
           </section>
